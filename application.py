@@ -8,9 +8,9 @@ import subprocess
 import platform
 import pyperclip
 import webbrowser
-import ttkbootstrap as tb  # ttkbootstrap 추가
+import ttkbootstrap as tb  # ttkbootstrap 追加
 
-class Application(tb.Frame):  # tb.Frame으로 변경
+class Application(tb.Frame):  # tb.Frameに変更
     LANGUAGE_ORDER = ["KOR", "ENG", "JPN", "CHN", "SPA", "VIE", "IND", "THA"]
 
     def __init__(self, master=None):
@@ -39,12 +39,12 @@ class Application(tb.Frame):  # tb.Frame으로 변경
         button_frame.grid(row=0, column=0, pady=(10, 5), padx=10, sticky="ew")
 
         buttons = [
-            ("폴더 선택", self.select_folder),
-            ("에러 설정", self.open_settings),
-            ("결과 저장", self.save_results_to_file),
-            ("폴더 재검사", self.recheck_folder),
-            ("형식 수정", self.fix_format),
-            ("srt 형식 체크", self.check_srt_format),
+            ("フォルダ選択", self.select_folder),
+            ("エラー設定", self.open_settings),
+            ("結果保存", self.save_results_to_file),
+            ("フォルダ再検査", self.recheck_folder),
+            ("形式修正", self.fix_format),
+            ("srt形式チェック", self.check_srt_format),
         ]
 
         for text, command in buttons:
@@ -61,19 +61,19 @@ class Application(tb.Frame):  # tb.Frame으로 변경
         self.fix_format_button.config(state=tk.DISABLED)
         self.check_format_button.config(state=tk.DISABLED)
 
-        # 화면 설명서 버튼 추가
-        help_button = tb.Button(button_frame, text="화면 설명서", command=self.open_help_url, bootstyle="info")
+        # 画面説明書ボタン追加
+        help_button = tb.Button(button_frame, text="画面説明書", command=self.open_help_url, bootstyle="info")
         help_button.pack(side=tk.RIGHT, padx=(5, 0))
 
     def open_help_url(self):
-        webbrowser.open("https://www.figma.com/board/VLNNmvCkn7N7bbczbjnzPA/subtitle_cheker?node-id=0-1&t=ptPGO00fcSiR6XdR-1")  # 원하는 URL로 변경
+        webbrowser.open("https://www.figma.com/board/VLNNmvCkn7N7bbczbjnzPA/subtitle_cheker?node-id=0-1&t=ptPGO00fcSiR6XdR-1")  # 希望するURLに変更
 
     def create_stats_frame(self):
         self.stats_frame = ttk.Frame(self)
         self.stats_frame.grid(row=1, column=0, pady=(0, 5), padx=10, sticky="ew")
 
         self.stats_toggle = tb.Button(
-            self.stats_frame, text="통계 보기", command=self.toggle_stats, bootstyle="secondary"
+            self.stats_frame, text="統計表示", command=self.toggle_stats, bootstyle="secondary"
         )
         self.stats_toggle.pack(side=tk.LEFT, padx=(0, 5))
         self.stats_toggle.config(state=tk.DISABLED)
@@ -85,10 +85,10 @@ class Application(tb.Frame):  # tb.Frame으로 변경
     def toggle_stats(self):
         if self.stats_content.winfo_manager():
             self.stats_content.pack_forget()
-            self.stats_toggle.config(text="통계 보기")
+            self.stats_toggle.config(text="統計表示")
         else:
             self.stats_content.pack(side=tk.LEFT, fill=tk.X, expand=True)
-            self.stats_toggle.config(text="통계 숨기기")
+            self.stats_toggle.config(text="統計非表示")
             self.update_stats()
 
     def update_stats(self):
@@ -96,10 +96,10 @@ class Application(tb.Frame):  # tb.Frame으로 변경
             widget.destroy()
 
         if not self.results:
-            ttk.Label(self.stats_content, text="결과가 없습니다.").pack()
+            ttk.Label(self.stats_content, text="結果がありません。").pack()
             return
 
-        # 전체 에러 개수를 표시할 프레임
+        # 全体エラー数を表示するフレーム
         total_frame = ttk.Frame(self.stats_content)
         total_frame.pack(side=tk.LEFT, padx=(0, 10), fill=tk.Y)
 
@@ -131,7 +131,7 @@ class Application(tb.Frame):  # tb.Frame으로 변경
                         )
                         lang_total += 1
 
-                # 언어별 전체 에러 개수를 크게 표시
+                # 言語ごとの全体エラー数を大きく表示
                 ttk.Label(
                     lang_frame, text=str(lang_total), font=("TkDefaultFont", 18, "bold")
                 ).pack(anchor=tk.W, pady=(0, 5))
@@ -141,9 +141,9 @@ class Application(tb.Frame):  # tb.Frame으로 변경
                         anchor=tk.W
                     )
 
-        # 통계를 바로 표시
+        # 統計をすぐに表示
         self.stats_content.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.stats_toggle.config(text="통계 숨기기")
+        self.stats_toggle.config(text="統計非表示")
 
     def create_results_tree(self):
         tree_frame = ttk.Frame(self)
@@ -180,7 +180,7 @@ class Application(tb.Frame):  # tb.Frame으로 변경
         try:
             self.settings_manager.update_settings(self.settings)
         except Exception as e:
-            messagebox.showerror("오류", f"설정 저장 중 오류 발생: {str(e)}")
+            messagebox.showerror("エラー", f"設定保存中にエラーが発生しました: {str(e)}")
 
     def select_folder(self):
         self.folder_path = filedialog.askdirectory()
@@ -198,13 +198,13 @@ class Application(tb.Frame):  # tb.Frame으로 변경
             self.fix_format_button.config(state=tk.NORMAL)
             self.stats_toggle.config(state=tk.NORMAL)
             self.stats_content.pack(side=tk.LEFT, fill=tk.X, expand=True)
-            self.stats_toggle.config(text="통계 숨기기")
+            self.stats_toggle.config(text="統計非表示")
 
     def recheck_folder(self):
         if self.folder_path:
             self.process_folder()
         else:
-            messagebox.showerror("오류", "재검사할 폴더가 선택되지 않았습니다.")
+            messagebox.showerror("エラー", "再検査するフォルダが選択されていません。")
 
     def open_settings(self):
         ErrorSettingsWindow(self, self.settings)
@@ -238,7 +238,7 @@ class Application(tb.Frame):  # tb.Frame으로 변경
         item = self.results_tree.selection()[0]
         values = self.results_tree.item(item, "values")
 
-        # 값이 없는 경우 (언어 항목 등) 무시
+        # 値がない場合（言語項目など）無視
         if not values:
             return
 
@@ -260,7 +260,7 @@ class Application(tb.Frame):  # tb.Frame으로 변경
 
     def show_full_text(self, text):
         popup = tk.Toplevel(self)
-        popup.title("전체 자막 텍스트")
+        popup.title("字幕テキスト全体")
         popup.geometry("400x300")
 
         text_widget = tk.Text(popup, wrap=tk.WORD)
@@ -275,12 +275,12 @@ class Application(tb.Frame):  # tb.Frame으로 변경
 
     def open_file(self, file_name):
         if not self.folder_path:
-            messagebox.showerror("오류", f"파일을 찾을 수 없습니다: {full_path}")
+            messagebox.showerror("エラー", f"ファイルが見つかりません: {full_path}")
             return
 
         full_path = os.path.join(self.folder_path, file_name)
         if not os.path.exists(full_path):
-            messagebox.showerror("오류", f"파일을 찾을 수 없습니다: {full_path}")
+            messagebox.showerror("エラー", f"ファイルが見つかりません: {full_path}")
             return
 
         if platform.system() == "Darwin":
@@ -292,7 +292,7 @@ class Application(tb.Frame):  # tb.Frame으로 변경
 
     def save_results_to_file(self):
         if not self.results:
-            messagebox.showinfo("알림", "저장할 결과가 없습니다.")
+            messagebox.showinfo("通知", "保存する結果がありません。")
             return
 
         file_path = filedialog.asksaveasfilename(
@@ -317,60 +317,60 @@ class Application(tb.Frame):  # tb.Frame으로 변경
                                 f.write(f"Error: PARSE_ERROR\n")
                                 f.write(f"Details: {error[1]}\n")
                             f.write("-" * 50 + "\n")
-            messagebox.showinfo("알림", f"결과가 {file_path}에 저장되었습니다.")
+            messagebox.showinfo("通知", f"結果が{file_path}に保存されました。")
         except Exception as e:
-            messagebox.showerror("오류", f"결과 저장 중 오류 발생: {str(e)}")
+            messagebox.showerror("エラー", f"結果保存中にエラーが発生しました: {str(e)}")
 
     def on_closing(self):
         self.master.destroy()
 
     def fix_format(self):
         if not self.folder_path:
-            messagebox.showerror("오류", "폴더가 선택되지 않았습니다.")
+            messagebox.showerror("エラー", "フォルダが選択されていません。")
             return
         
         try:
             files_modified, tc_modified, text_space_modified, blank_lines_removed = fix_srt_format(self.folder_path)
             result_message = (
-                f"총 {files_modified}개 파일이 수정되었습니다.\n\n"
-                f"- TC 공백 수정: {tc_modified}개\n"
-                f"- 텍스트 앞뒤 공백 수정: {text_space_modified}줄\n"
-                f"- 텍스트 사이 빈줄 제거: {blank_lines_removed}줄\n"
+                f"合計{files_modified}個のファイルが修正されました。\n\n"
+                f"- TC空白修正: {tc_modified}個\n"
+                f"- テキスト前後の空白修正: {text_space_modified}行\n"
+                f"- テキスト間の空行削除: {blank_lines_removed}行\n"
             )
-            messagebox.showinfo("완료", result_message)
+            messagebox.showinfo("完了", result_message)
         except Exception as e:
-            messagebox.showerror("오류", f"형식 수정 중 오류가 발생했습니다: {str(e)}")
+            messagebox.showerror("エラー", f"形式修正中にエラーが発生しました: {str(e)}")
 
     def check_srt_format(self):
         if not self.folder_path:
-            messagebox.showerror("오류", "폴더가 선택되지 않았습니다.")
+            messagebox.showerror("エラー", "フォルダが選択されていません。")
             return
         
         try:
             format_errors = check_srt_format(self.folder_path)
             if format_errors:
-                # 결과 트리뷰 초기화
+                # 結果ツリービュー初期化
                 self.results_tree.delete(*self.results_tree.get_children())
                 
-                # 'FORMAT' 노드 생성
+                # 'FORMAT'ノード作成
                 format_node = self.results_tree.insert("", "end", text="FORMAT")
                 
-                # 각 에러를 트리뷰에 추가
+                # 各エラーをツリービューに追加
                 for error in format_errors:
                     values = (
                         error["File"],
                         error["StartTC"],
                         error["ErrorType"],
                         error["ErrorContent"],
-                        ""  # SubtitleText는 비워둠
+                        ""  # SubtitleTextは空欄
                     )
                     self.results_tree.insert(format_node, "end", values=values)
                 
-                messagebox.showinfo("완료", f"총 {len(format_errors)}개의 형식 오류가 발견되었습니다.")
+                messagebox.showinfo("完了", f"合計{len(format_errors)}個の形式エラーが見つかりました。")
             else:
-                messagebox.showinfo("완료", "형식 오류가 발견되지 않았습니다. 일반 에러를 검사합니다.")
-                # 형식 오류가 없을 경우 자동으로 폴더 재검사 실행
+                messagebox.showinfo("完了", "形式エラーが見つかりませんでした。一般エラーを検査します。")
+                # 形式エラーがない場合、自動的にフォルダ再検査を実行
                 self.process_folder()
                 
         except Exception as e:
-            messagebox.showerror("오류", f"형식 체크 중 오류가 발생했습니다: {str(e)}")
+            messagebox.showerror("エラー", f"形式チェック中にエラーが発生しました: {str(e)}")

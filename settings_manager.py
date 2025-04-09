@@ -9,10 +9,10 @@ class SettingsManager:
 
     def get_settings_file_path(self, settings_file):
         if getattr(sys, 'frozen', False):
-            # PyInstaller로 빌드된 실행 파일인 경우
+            # PyInstallerでビルドされた実行ファイルの場合
             application_path = os.path.dirname(sys.executable)
         else:
-            # 스크립트로 실행되는 경우
+            # スクリプトとして実行される場合
             application_path = os.path.dirname(os.path.abspath(__file__))
         return os.path.join(application_path, settings_file)
 
@@ -21,10 +21,10 @@ class SettingsManager:
             lang: True for lang in ['KOR', 'ENG', 'JPN', 'CHN', 'SPA', 'VIE', 'IND', 'THA']}
         default_settings = {
             "errors": [
-                {"name": "줄당 자수", "languages": default_languages.copy()},
-                {"name": "줄 수", "languages": default_languages.copy()},
-                {"name": "@@@여부", "languages": default_languages.copy()},
-                {"name": "중간 말줄임표", "languages": {
+                {"name": "行ごとの文字数", "languages": default_languages.copy()},
+                {"name": "行数", "languages": default_languages.copy()},
+                {"name": "@@@有無", "languages": default_languages.copy()},
+                {"name": "中間省略記号", "languages": {
                     "KOR": True,
                     "ENG": False,
                     "JPN": False,
@@ -33,7 +33,7 @@ class SettingsManager:
                     "VIE": False,
                     "IND": False,
                     "THA": False}},
-                {"name": "온점 말줄임표", "languages": {
+                {"name": "ピリオド省略記号", "languages": {
                     "KOR": False,
                     "ENG": True,
                     "JPN": True,
@@ -42,8 +42,8 @@ class SettingsManager:
                     "VIE": True,
                     "IND": True,
                     "THA": True}},
-                {"name": "온점 2,4개", "languages": default_languages.copy()},
-                {"name": "줄 끝 마침표", "languages": {
+                {"name": "ピリオド2,4個", "languages": default_languages.copy()},
+                {"name": "行末ピリオド", "languages": {
                     "KOR": True,
                     "ENG": True,
                     "JPN": True,
@@ -52,7 +52,7 @@ class SettingsManager:
                     "VIE": True,
                     "IND": False,
                     "THA": True}},
-                {"name": "줄 끝 마침표 누락", "languages": {
+                {"name": "行末ピリオド欠落", "languages": {
                     "KOR": True,
                     "ENG": True,
                     "JPN": True,
@@ -61,7 +61,7 @@ class SettingsManager:
                     "VIE": True,
                     "IND": True,
                     "THA": True}},
-                {"name": "하이픈 뒤 공백O", "languages": {
+                {"name": "ハイフン後スペースあり", "languages": {
                     "KOR": False,
                     "ENG": True,
                     "JPN": False,
@@ -70,7 +70,7 @@ class SettingsManager:
                     "VIE": False,
                     "IND": True,
                     "THA": False}},
-                {"name": "하이픈 뒤 공백X", "languages": {
+                {"name": "ハイフン後スペースなし", "languages": {
                     "KOR": True,
                     "ENG": False,
                     "JPN": True,
@@ -79,8 +79,8 @@ class SettingsManager:
                     "VIE": True,
                     "IND": False,
                     "THA": True}},
-                {"name": "불필요한 공백", "languages": default_languages.copy()},
-                {"name": "일반 물결", "languages": {
+                {"name": "不要なスペース", "languages": default_languages.copy()},
+                {"name": "通常波線", "languages": {
                     "KOR": False,
                     "ENG": False,
                     "JPN": True,
@@ -89,11 +89,11 @@ class SettingsManager:
                     "VIE": False,
                     "IND": False,
                     "THA": False}},
-                {"name": "음표 기호", "languages": default_languages.copy()},
-                {"name": "블러 기호", "languages": default_languages.copy()},
-                {"name": "전각 숫자", "languages": default_languages.copy()},
-                {"name": "화면자막 위치", "languages": default_languages.copy()},
-                {"name": "중국어 따옴표 사용", "languages": {
+                {"name": "音符記号", "languages": default_languages.copy()},
+                {"name": "ぼかし記号", "languages": default_languages.copy()},
+                {"name": "全角数字", "languages": default_languages.copy()},
+                {"name": "画面字幕位置", "languages": default_languages.copy()},
+                {"name": "中国語引用符使用", "languages": {
                     "KOR": False,
                     "ENG": False,
                     "JPN": False,
@@ -103,7 +103,7 @@ class SettingsManager:
                     "IND": False,
                     "THA": False}
                  },
-                 {"name": "괄호 사용", "languages": {
+                 {"name": "括弧使用", "languages": {
                     "KOR": False,
                     "ENG": False,
                     "JPN": True,
@@ -113,7 +113,7 @@ class SettingsManager:
                     "IND": False,
                     "THA": False}
                  },
-                 {"name": "물음표/느낌표 사용", "languages": {
+                 {"name": "疑問符/感嘆符使用", "languages": {
                     "KOR": False,
                     "ENG": False,
                     "JPN": True,
@@ -123,11 +123,12 @@ class SettingsManager:
                     "IND": False,
                     "THA": False}
                  },
-                 {"name": "KOR 사용", "languages": default_languages.copy()},
-                 {"name": "특수 아스키 문자", "languages": default_languages.copy()},
-                 {"name": "대괄호 내용 오류", "languages": default_languages.copy()},
-                 {"name": "마지막 줄 쉼표", "languages": default_languages.copy()},
-                 {"name": "일본어 구두점", "languages": {
+                 {"name": "KOR使用", "languages": default_languages.copy()},
+                 {"name": "特殊アスキー文字", "languages": default_languages.copy()},
+                 {"name": "ハイフン1個", "languages": default_languages.copy()},
+                 {"name": "大括弧内容エラー", "languages": default_languages.copy()},
+                 {"name": "最後の行カンマ", "languages": default_languages.copy()},
+                 {"name": "日本語句読点", "languages": {
                     "KOR": False,
                     "ENG": False,
                     "JPN": True,
@@ -135,8 +136,11 @@ class SettingsManager:
                     "SPA": False,
                     "VIE": False,
                     "IND": False,
-                    "THA": False
-                 }}
+                    "THA": False}
+                 },
+                 {"name": "持続時間エラー", "languages": default_languages.copy()},
+                 {"name": "エンコードエラー", "languages": default_languages.copy()},
+                 {"name": "文末ハイフン/アンダーバー", "languages": default_languages.copy()}
             ]
         }
         if os.path.exists(self.settings_file):
@@ -154,7 +158,7 @@ class SettingsManager:
             with open(self.settings_file, 'w', encoding='utf-8') as f:
                 json.dump(self.settings, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            print(f"설정 저장 중 오류 발생: {str(e)}")
+            print(f"設定保存中にエラーが発生しました: {str(e)}")
             raise
 
     def get_settings(self):

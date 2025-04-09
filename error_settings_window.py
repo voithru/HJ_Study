@@ -1,40 +1,40 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import platform
-import ttkbootstrap as tb  # ttkbootstrap 추가
+import ttkbootstrap as tb  # ttkbootstrap 追加
 
 
-class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
+class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevelに変更
     def __init__(self, parent, settings):
         super().__init__(parent)
         self.parent = parent
         self.settings = settings
-        self.title("에러 설정")
-        self.geometry("1200x600")  # 창 크기를 넓혀서 설명을 표시할 공간 확보
+        self.title("エラー設定")
+        self.geometry("1200x600")  # ウィンドウサイズを広げて説明を表示するスペースを確保
         self.create_widgets()
         self.resizable(True, True)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
-        self.scroll_speed = 2  # 스크롤 속도 조절 상수
+        self.scroll_speed = 2  # スクロール速度調整定数
 
     def create_widgets(self):
         main_frame = ttk.Frame(self)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-        # 고정된 헤더 프레임 생성
+        # 固定ヘッダーフレーム作成
         header_frame = ttk.Frame(main_frame)
         header_frame.pack(fill=tk.X)
 
-        # 컬럼 제목 추가
-        ttk.Label(header_frame, text="에러 항목", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        ttk.Label(header_frame, text="설명 및 예시", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=1, padx=10, pady=5, sticky="w")
-        ttk.Label(header_frame, text="특이사항", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=2, padx=10, pady=5, sticky="w")
+        # カラムタイトル追加
+        ttk.Label(header_frame, text="エラー項目", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        ttk.Label(header_frame, text="説明と例", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=1, padx=10, pady=5, sticky="w")
+        ttk.Label(header_frame, text="特記事項", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=2, padx=10, pady=5, sticky="w")
 
-        # 컬럼 너비 설정
+        # カラム幅設定
         header_frame.columnconfigure(0, weight=1, minsize=180)
         header_frame.columnconfigure(1, weight=1, minsize=300)
         header_frame.columnconfigure(2, weight=1, minsize=200)
 
-        # 스크롤 가능한 영역 생성
+        # スクロール可能領域作成
         content_frame = ttk.Frame(main_frame)
         content_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -55,7 +55,7 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
         self.canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        # 마우스 휠 이벤트 바인딩
+        # マウスホイールイベントバインディング
         self.bind_all("<MouseWheel>", self._on_mousewheel)
         self.bind_all("<Button-4>", self._on_mousewheel)
         self.bind_all("<Button-5>", self._on_mousewheel)
@@ -63,61 +63,65 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
         self.lang_vars = {}
 
         error_descriptions = {
-            "줄당 자수": ("각 줄이 최대 문자 수를 초과하는지 확인합니다.", "이것은 매우매우 매우매우 매우매우 매우매우 긴 문장입니다."),
-            "줄 수": ("각 자막이 허용된 최대 줄 수를 초과하는지 확인합니다.", "첫 번째 줄\n두 번째 줄\n세 번째 줄\n네 번째 줄"),
-            "@@@여부": ("각 줄에 '@@@' 혹은 '＠＠＠'가 포함되어 있는지 확인합니다.", "이것은 @@@ 불명확한 발화 표기입니다."),
-            "중간 말줄임표": ("각 줄에 '⋯'가 있는지 확인합니다.", "이것은⋯ 중간 말줄임표입니다."),
-            "온점 말줄임표": ("각 줄에 '...'가 있는지 확인합니다.", "이것은... 온점 말줄임표입니다."),
-            "온점 2,4개": ("각 줄에 '..' 또는 '....'가 있는지 있는지 확인합니다.", "이것은.. 온점 2,4개 입니다...."),
-            "줄 끝 마침표": ("각 줄 끝에 '.'가 있는지 확인합니다.", "이것은 마침표입니다."),
-            "하이픈 뒤 공백O": ("각 줄에 하이픈 뒤에 공백이 있는지 확인합니다.", "- 이것은 공백O입니다."),
-            "하이픈 뒤 공백X": ("각 줄에 하이픈 뒤에 공백이 없는지 확인합니다.", "-이것은 공백X입니다."),
-            "불필요한 공백": ("각 줄에 이중공백: '  '\n각 줄의 맨 앞, 끝: ' '\n소괄호, 중괄호, 대괄호 안쪽의 공백: '[{( ' 또는 ' )}]'", "[ 이것은 공백입니다. )"),
-            "일반 물결": ("각 줄에 '~'가 있는지 확인합니다.", "이것은 ~ 물결입니다."),
-            "음표 기호": ("각 줄에 '♪'가 있을 경우, 2개가 있는지 확인합니다.\n음표의 안쪽에 공백이 있는지 확인합니다.", "♪이것은 음표입니다♪"),
-            "블러 기호": ("각 줄에 '○'가 있는지 확인 합니다.", "이것은 ○입니다."),
-            "전각 숫자": ("각 줄에 전각 숫자가 있는지 확인합니다.", "이것은 １２３ 전각 숫자입니다."),
-            "화면자막 위치": ("각 자막에 대괄호 내의 텍스트가 일반 텍스트보다 아래에 있는지 확인합니다.\n각 자막에 대괄호가 쌍으로 존재하는지 확인합니다.", "[화면자막]\n이것은 테스트입니다."),
-            "중국어 따옴표 사용" : ("각 줄에 중국어 따옴표 “ ”‘’ 가 있는지 확인합니다."," “이것은 큰 따옴표입니다.”\n‘이것은 작은 따옴표 입니다.’"),
-            "괄호 사용" : ("각 줄에 소괄호와 대괄호가 올바르게 전각/반각으로 사용했는지 확인합니다.","() : 반각 소괄호, （） : 전각 소괄호\n[] : 반각 대괄호,［］ : 전각 대괄호"),
-            "물음표/느낌표 사용" : ("각 줄에 물음표와 느낌표가\n단독 사용시 전각\n중복 사용시 반각인지 확인합니다.","단독사용 반각물음표?\n이중사용 전각기호！？"),
-            "KOR 사용" : ("각 줄에 KOR 언어가 사용되었는지 확인합니다.","This is a 한국어 텍스트"),
-            "특수 아스키 문자" : ("각 줄에 <0x08>와 <0xa0>아스키코드 기호가 사용되었는지 확인합니다.","이것은 <0x08>기호입니다.\n이것은 <0xa0>기호입니다."),
-            "하이픈 1개" : ("각 자막에 하이픈(-)이 한 개만 있는지 확인합니다.","- 이것은 하이픈입니다\n이것은 일반문장입니다."),
-            "대괄호 내용 오류" : ("각 줄에 대괄호 내에 숫자나 특수기호만 있는지 확인합니다","[?]\n[이것은 화면 자막입니다]"),
-            "줄 끝 마침표 누락": ("각 자막의 마지막 줄에 문장 끝 부호가 없는지 확인합니다.", "이것은 마침표가 없는 문장\n이것은 마침표가 있는 문장."),
-            "마지막 줄 쉼표": ("각 자막의 마지막 줄이 쉼표로 끝나는지 확인합니다.", "첫 번째 줄\n두 번째 줄,"),
-            "일본어 구두점": ("일본어 자막에서 마침표(.)와 쉼표(,) 사용을 확인합니다.", "これは間違った例です. (X)\nこれは正しい例です。(O)"),
-            "Duration 오류": ("각 자막의 지속 시간이 최소 1초, 최대 8초를 벗어나는지 확인합니다.", "1초 미만 또는 8초 초과 자막"),
+            "行ごとの文字数": ("各行が最大文字数を超えているかチェックします。", "これはとても長い長い長い長い長い長い長い長い文章です。"),
+            "行数": ("各字幕が許容された最大行数を超えているかチェックします。", "一行目\n二行目\n三行目\n四行目"),
+            "@@@有無": ("各行に '@@@' または '＠＠＠'が含まれているかチェックします。", "これは @@@ 不明確な発話表記です。"),
+            "中間省略記号": ("各行に '⋯'があるかチェックします。", "これは⋯ 中間省略記号です。"),
+            "ピリオド省略記号": ("各行に '...'があるかチェックします。", "これは... ピリオド省略記号です。"),
+            "ピリオド2,4個": ("各行に '..' または '....'があるかチェックします。", "これは.. ピリオド2,4個 です...."),
+            "行末ピリオド": ("各行の末尾に'.'があるかチェックします。", "これはピリオドです。"),
+            "ハイフン後スペースあり": ("各行にハイフンの後にスペースがあるかチェックします。", "- これはスペースありです。"),
+            "ハイフン後スペースなし": ("各行にハイフンの後にスペースがないかチェックします。", "-これはスペースなしです。"),
+            "不要なスペース": ("各行の二重スペース: '  '\n各行の先頭、末尾: ' '\n小括弧、中括弧、大括弧内側のスペース: '[{( ' または ' )}]'", "[ これはスペースです。 )"),
+            "通常波線": ("各行に '~'があるかチェックします。", "これは ~ 波線です。"),
+            "音符記号": ("各行に '♪'がある場合、2つあるかチェックします。\n音符の内側にスペースがあるかチェックします。", "♪これは音符です♪"),
+            "ぼかし記号": ("各行に '○'があるかチェックします。", "これは ○です。"),
+            "全角数字": ("各行に全角数字があるかチェックします。", "これは １２３ 全角数字です。"),
+            "画面字幕位置": ("各字幕に大括弧内のテキストが一般テキストより下にあるかチェックします。\n各字幕に大括弧がペアで存在するかチェックします。", "[画面字幕]\nこれはテストです。"),
+            "中国語引用符使用": ("各行の中国語引用符使用をチェックします。", "\"これは二重引用符です。\"\n'これは単一引用符です。'"),
+            "括弧使用": ("各行の小括弧と大括弧が正しく全角/半角で使用されているかチェックします。", "() : 半角小括弧、（） : 全角小括弧\n[] : 半角大括弧、［］ : 全角大括弧"),
+            "疑問符/感嘆符使用": ("各行の疑問符と感嘆符が\n単独使用時全角\n重複使用時半角かチェックします。", "単独使用半角疑問符?\n二重使用全角記号！？"),
+            "KOR使用": ("各行にKOR言語が使用されているかチェックします。", "This is a 韓国語 テキスト"),
+            "特殊アスキー文字": ("各行に<0x08>と<0xa0>アスキーコード記号が使用されているかチェックします。", "これは<0x08>記号です。\nこれは<0xa0>記号です。"),
+            "ハイフン1個": ("各字幕にハイフン(-)が一つだけあるかチェックします。", "- これはハイフンです\nこれは一般文です。"),
+            "大括弧内容エラー": ("各行の大括弧内に数字や特殊記号だけがあるかチェックします。", "[?]\n[これは画面字幕です]"),
+            "行末ピリオド欠落": ("各字幕の最後の行に文末記号がないかチェックします。", "これはピリオドがない文\nこれはピリオドがある文。"),
+            "最後の行カンマ": ("各字幕の最後の行がコンマで終わるかチェックします。", "一行目\n二行目,"),
+            "日本語句読点": ("日本語字幕でのピリオド(.)とコンマ(,)の使用をチェックします。", "これは間違った例です. (X)\nこれは正しい例です。(O)"),
+            "持続時間エラー": ("各字幕の持続時間が最小1秒、最大8秒を超えるかチェックします。", "1秒未満または8秒超過字幕"),
+            "エンコードエラー": ("字幕テキストでエンコーディングが崩れた痕跡があるかチェックします。", "これは â€™â€ エンコーディングが崩れたテキストです。"),
+            "文末ハイフン/アンダーバー": ("各行の末尾に短い半角ハイフン(-)やアンダーバー(_)があるかチェックします。", "これは不完全な文です-\nこれは不完全な文です_"),
         }
 
         error_notes = {
-            "줄당 자수": "KOR: 20, ENG: 42, JPN: 16, CHN: 20\nSPA: 42, VIE: 42, IND: 55, THA: 42\n\nJPN, CHN의 경우 영문자와 공백은 0.5자 취급",
-            "줄 수": "3줄 까지 정상, 4줄 이상 에러 ",
-            "@@@여부": "잘 들리지 않는 구간 특수기호 검색",
-            "중간 말줄임표": "온점이 아닌 특수 문자",
-            "온점 말줄임표": "온점(.) 정확히 3개",
-            "온점 2,4개": "온점(.) 정확히 2개 또는 4개",
-            "줄 끝 마침표": "JPN, CHN : '。' 과 '.' 모두 포함",
-            "하이픈 뒤 공백O": "하이픈 뒤에 공백이 없어야 하는 언어 대상",
-            "하이픈 뒤 공백X": "하이픈 뒤에 공백이 있어야 하는 언어 대상",
-            "불필요한 공백": "",
-            "일반 물결": "일반 물결 대신 틸다(～) 사용 언어 대상 (일본어)",
-            "음표 기호": "",
-            "블러 기호": "에러 체크 목적이 아닌, 블러기호 확인",
-            "전각 숫자": "",
-            "화면자막 위치": "대괄호 표기 텍스트가 일반 텍스트보다 아래에 있어야 하는 작업 대상",
-            "중국어 따옴표 사용" : "",
-            "괄호 사용" : "JPN : 소괄호 전각, 대괄호 반각\nCHN : 소괄호 반각, 대괄호 반각\n이 외의 언어 동작X",
-            "물음표/느낌표 사용" : "소괄호, 대괄호와 같이 쓰였는지는 검사하지 않습니다.\n물음표와 느낌표의 중복 사용만 체크합니다.",
-            "KOR 사용" : "한국어를 제외한 언어 대상",
-            "특수 아스키 문자" : "아스키코드 <0x08>, <0xa0> 사용 여부",
-            "하이픈 1개" : "하이픈이 2개 이상인 경우 에러 출력하지 않습니다.",
-            "대괄호 내용 오류" : "",
-            "줄 끝 마침표 누락": "JPN, CHN : '。' 과 '.' 모두 포함\n대괄호 텍스트, 음표 사이 텍스트, 하이픈 대사는 제외",
-            "마지막 줄 쉼표": "자막의 마지막 줄이 쉼표로 끝나면 안됩니다",
-            "일본어 구두점": "일본어에서는 마침표(.) 대신 。을, 쉼표(,) 대신 、을 사용해야 합니다",
-            "Duration 오류": "최소 지속 시간: 1초\n최대 지속 시간: 8초",
+            "行ごとの文字数": "KOR: 20, ENG: 42, JPN: 16, CHN: 20\nSPA: 42, VIE: 42, IND: 55, THA: 42\n\nJPN、CHNの場合、英数字とスペースは0.5文字扱い",
+            "行数": "3行まで正常、4行以上エラー",
+            "@@@有無": "聞き取りにくい部分の特殊記号検索",
+            "中間省略記号": "ピリオドではない特殊文字",
+            "ピリオド省略記号": "ピリオド(.)正確に3つ",
+            "ピリオド2,4個": "ピリオド(.)正確に2つまたは4つ",
+            "行末ピリオド": "JPN、CHN：'。'と'.'両方含む",
+            "ハイフン後スペースあり": "ハイフンの後にスペースがあってはならない言語対象",
+            "ハイフン後スペースなし": "ハイフンの後にスペースがあるべき言語対象",
+            "不要なスペース": "",
+            "通常波線": "通常波線の代わりにチルダ(～)を使用する言語対象（日本語）",
+            "音符記号": "",
+            "ぼかし記号": "エラーチェック目的ではなく、ぼかし記号確認",
+            "全角数字": "",
+            "画面字幕位置": "大括弧表記テキストが一般テキストより下にあるべき作業対象",
+            "中国語引用符使用": "",
+            "括弧使用": "JPN：小括弧全角、大括弧半角\nCHN：小括弧半角、大括弧半角\nそれ以外の言語は動作しません",
+            "疑問符/感嘆符使用": "小括弧、大括弧との併用は検査しません。\n疑問符と感嘆符の重複使用のみチェックします。",
+            "KOR使用": "韓国語を除く言語対象",
+            "特殊アスキー文字": "アスキーコード<0x08>、<0xa0>使用の有無",
+            "ハイフン1個": "ハイフンが2つ以上ある場合、エラー出力しません。",
+            "大括弧内容エラー": "",
+            "行末ピリオド欠落": "JPN、CHN：'。'と'.'両方含む\n大括弧テキスト、音符間テキスト、ハイフン台詞は除外",
+            "最後の行カンマ": "字幕の最後の行はコンマで終わってはいけません",
+            "日本語句読点": "日本語ではピリオド(.)の代わりに。を、コンマ(,)の代わりに、を使用する必要があります",
+            "持続時間エラー": "最小持続時間：1秒\n最大持続時間：8秒",
+            "エンコードエラー": "UTF-8がCP949や他のエンコーディングで誤って解釈された場合など\n特殊文字の崩れ、異常なユニコード文字などを検出します",
+            "文末ハイフン/アンダーバー": "文がハイフンやアンダーバーで終わる場合、文が不完全または接続が間違っている可能性があります",
         }
 
         for i, error in enumerate(self.settings["errors"]):
@@ -132,7 +136,7 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
             all_var = tk.BooleanVar(value=all(error["languages"].values()))
             ttk.Checkbutton(
                 error_frame,
-                text="전체선택/해제",
+                text="全て選択/解除",
                 variable=all_var,
                 command=lambda e=error["name"], v=all_var: self.toggle_all(e, v),
             ).grid(row=0, column=1, sticky=tk.E)
@@ -150,21 +154,21 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
                 )
                 self.lang_vars[error["name"]][lang] = var
 
-            # 에러 설명 추가
+            # エラー説明追加
             description, example = error_descriptions.get(error["name"], ("", ""))
             desc_label = ttk.Label(
-                self.scrollable_frame, text=f"설명:\n{description}\n\n검색 텍스트 예시:\n{example}", anchor="w", justify="left"
+                self.scrollable_frame, text=f"説明:\n{description}\n\n検索テキスト例:\n{example}", anchor="w", justify="left"
             )
             desc_label.grid(row=i*2, column=1, sticky="w", padx=20, pady=5)
 
-            # 특이사항 추가
+            # 特記事項追加
             note = error_notes.get(error["name"], "")
             note_label = ttk.Label(
                 self.scrollable_frame, text=f"{note}", anchor="w", justify="left"
             )
             note_label.grid(row=i*2, column=2, sticky="w", padx=20, pady=5)
 
-            # 에러 항목과 설명 사이에 구분선 추가
+            # エラー項目と説明の間に区切り線追加
             ttk.Separator(self.scrollable_frame, orient="horizontal").grid(
                 row=i*2+1, column=0, columnspan=3, sticky="ew", padx=10, pady=(10, 0)
             )
@@ -172,8 +176,8 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
         button_frame = ttk.Frame(self)
         button_frame.pack(pady=10, padx=20, fill=tk.X)
 
-        tb.Button(button_frame, text="취소", command=self.destroy, bootstyle="danger-outline").pack(side=tk.RIGHT)
-        tb.Button(button_frame, text="저장", command=self.save_settings, bootstyle="success-outline").pack(
+        tb.Button(button_frame, text="キャンセル", command=self.destroy, bootstyle="danger-outline").pack(side=tk.RIGHT)
+        tb.Button(button_frame, text="保存", command=self.save_settings, bootstyle="success-outline").pack(
             side=tk.RIGHT, padx=10
         )
 
@@ -182,10 +186,10 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
             return
 
         try:
-            # 현재 스크롤 위치와 전체 크기 확인
+            # 現在のスクロール位置と全体サイズ確認
             current_position = self.canvas.yview()
 
-            # 스크롤 방향 결정 (방향만 사용, 크기는 무시)
+            # スクロール方向決定（方向のみ使用、大きさは無視）
             if platform.system() == "Windows":
                 direction = -1 if event.delta > 0 else 1
             elif platform.system() == "Darwin":  # macOS
@@ -198,15 +202,15 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
                 else:
                     return
 
-            # 고정된 스크롤 양 적용
+            # 固定スクロール量適用
             delta = direction * self.scroll_speed
 
-            # 스크롤 적용
+            # スクロール適用
             if (delta > 0 and current_position[1] < 1.0) or \
                 (delta < 0 and current_position[0] > 0.0):
                 self.canvas.yview_scroll(int(delta), "units")
         except tk.TclError:
-            # 윈도우가 이미 닫혔거나 캔버스가 존재하지 않는 경우
+            # ウィンドウが既に閉じられているか、キャンバスが存在しない場合
             self.unbind_all("<MouseWheel>")
             self.unbind_all("<Button-4>")
             self.unbind_all("<Button-5>")
@@ -227,13 +231,13 @@ class ErrorSettingsWindow(tb.Toplevel):  # tb.Toplevel으로 변경
 
         if not at_least_one_selected:
             messagebox.showwarning(
-                "경고", "최소한 하나의 언어가 선택되어야 합니다."
+                "警告", "少なくとも一つの言語が選択されている必要があります。"
             )
             return
         self.parent.settings = self.settings
         self.parent.save_settings()
         self.destroy()
-        messagebox.showinfo("알림", "설정이 저장되었습니다.")
+        messagebox.showinfo("通知", "設定が保存されました。")
 
     def on_closing(self):
         self.unbind_all("<MouseWheel>")

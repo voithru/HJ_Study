@@ -2,25 +2,25 @@ import tkinter as tk
 import sys
 from pathlib import Path
 from application import Application
-import ttkbootstrap as tb  # ttkbootstrap 추가
+import ttkbootstrap as tb  # ttkbootstrap 追加
 
 def setup_environment():
     if getattr(sys, "frozen", False):
-        # PyInstaller로 빌드된 실행 파일인 경우
+        # PyInstallerでビルドされた実行ファイルの場合
         application_path = Path(sys._MEIPASS)
     else:
-        # 스크립트로 실행되는 경우
+        # スクリプトとして実行される場合
         application_path = Path(__file__).parent
 
-    # 애플리케이션 경로를 시스템 경로에 추가
+    # アプリケーションパスをシステムパスに追加
     sys.path.append(str(application_path))
 
 def main():
     setup_environment()
 
-    # 기본 테마를 설정
+    # デフォルトテーマを設定
     theme = "litera"
-    root = tb.Window(themename=theme)  # ttkbootstrap 테마 적용
+    root = tb.Window(themename=theme)  # ttkbootstrap テーマ適用
     app = Application(master=root)
     
     root.protocol("WM_DELETE_WINDOW", app.on_closing)

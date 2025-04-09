@@ -42,9 +42,9 @@ def fix_srt_format(folder_path):
                     
                     i = 0
                     while i < len(lines):
-                        current_line = lines[i]  # rstrip() 제거
+                        current_line = lines[i]  # rstrip() 削除
                         
-                        # 현재 줄이 숫자이고 다음 줄이 타임코드인 경우 인덱스로 판단
+                        # 現在の行が数字で次の行がタイムコードの場合、インデックスと判断
                         if (current_line.strip().isdigit() and 
                             i + 1 < len(lines) and 
                             ' --> ' in lines[i + 1]):
@@ -52,24 +52,24 @@ def fix_srt_format(folder_path):
                             i += 1
                             continue
                             
-                        # TC 라인 처리
+                        # TC行処理
                         if ' --> ' in current_line:
-                            # TC 라인 끝의 공백 제거
+                            # TC行末の空白削除
                             cleaned_tc = current_line.rstrip()
                             if cleaned_tc != current_line.rstrip('\n'):
                                 tc_modified += 1
                             modified_lines.append(cleaned_tc + '\n')
                             
-                            # 자막 텍스트 영역 처리
+                            # 字幕テキスト領域処理
                             i += 1
                             text_lines = []
                             consecutive_blank_lines = 0
                             while i < len(lines):
-                                line = lines[i]  # 원본 라인 유지
-                                if not line.strip():  # 빈 줄을 만나면
+                                line = lines[i]  # 原本ライン維持
+                                if not line.strip():  # 空行に出会ったら
                                     consecutive_blank_lines += 1
                                     i += 1
-                                    # 다음 줄이 숫자이고 그 다음 줄이 타임코드면 현재 자막 블록 종료
+                                    # 次の行が数字でその次の行がタイムコードなら現在の字幕ブロック終了
                                     if (i < len(lines) - 1 and 
                                         lines[i].strip().isdigit() and 
                                         ' --> ' in lines[i + 1]):
@@ -78,35 +78,35 @@ def fix_srt_format(folder_path):
                                         break
                                     continue
                                 
-                                # 텍스트 라인 사이의 불필요한 빈 줄 카운트
+                                # テキストライン間の不要な空行カウント
                                 if consecutive_blank_lines > 0:
                                     blank_lines_removed += consecutive_blank_lines
                                 consecutive_blank_lines = 0
                                 
-                                # 텍스트 라인의 앞뒤 공백 제거 (전각/반각 모두)
-                                original_line = line.rstrip('\n')  # 줄바꿈만 제거한 원본
-                                cleaned_text = original_line.strip(' 　')  # 반각/전각 스페이스 모두 제거
-                                if cleaned_text != original_line:  # 원본과 비교
+                                # テキストラインの前後空白削除（全角/半角両方）
+                                original_line = line.rstrip('\n')  # 改行だけ削除した原本
+                                cleaned_text = original_line.strip(' 　')  # 半角/全角スペース両方削除
+                                if cleaned_text != original_line:  # 原本と比較
                                     text_space_modified += 1
                                 text_lines.append(cleaned_text + '\n')
                                 i += 1
                             
-                            # 텍스트 라인들 추가
+                            # テキストライン追加
                             modified_lines.extend(text_lines)
-                            modified_lines.append('\n')  # 자막 블록 구분용 빈 줄
+                            modified_lines.append('\n')  # 字幕ブロック区分用空行
                             continue
                         
                         i += 1
                     
-                    # 파일 끝의 불필요한 공백 라인 제거
+                    # ファイル末の不要な空白ライン削除
                     while modified_lines and modified_lines[-1].strip() == '':
                         modified_lines.pop()
                     
-                    # 무조건 파일 저장
+                    # 無条件でファイル保存
                     with open(file_path, 'w', encoding='utf-8', newline='\n') as f:
                         f.writelines(modified_lines)
                     
-                    # 실제 수정이 발생한 경우에만 files_modified 증가
+                    # 実際に修正が発生した場合だけfiles_modified増加
                     if tc_modified > 0 or text_space_modified > 0 or blank_lines_removed > 0:
                         files_modified += 1
                     total_tc_modified += tc_modified
@@ -135,29 +135,29 @@ def check_srt_format(folder_path):
                     first_tc_found = False
                     i = 0
                     while i < len(lines):
-                        # 타임코드 라인 찾기
+                        # タイムコードライン検索
                         if ' --> ' in lines[i]:
-                            # 첫 번째 타임코드가 아닐 경우에만 체크
+                            # 最初のタイムコードではない場合のみチェック
                             if first_tc_found:
-                                # 타임코드 바로 윗줄이 숫자가 아니거나
-                                # 그 윗줄이 빈 줄이 아닌 경우 에러
+                                # タイムコードの直上行が数字でないか
+                                # その上の行が空行でない場合エラー
                                 if (i < 1 or not lines[i-1].strip().isdigit() or 
                                     i < 2 or lines[i-2].strip() != ''):
                                     format_errors.append({
                                         'File': file,
                                         'Line': i + 1,
                                         'ErrorType': 'INDEX_BLANK_LINE',
-                                        'ErrorContent': '타임코드 윗줄이 인덱스가 아니거나, 인덱스 윗줄에 빈 줄이 없습니다.',
+                                        'ErrorContent': 'タイムコードの上の行がインデックスではないか、インデックスの上の行に空行がありません。',
                                         'StartTC': lines[i].strip()
                                     })
                             else:
-                                # 첫 번째 타임코드는 윗줄이 인덱스인지만 체크
+                                # 最初のタイムコードは上の行がインデックスかだけチェック
                                 if i < 1 or not lines[i-1].strip().isdigit():
                                     format_errors.append({
                                         'File': file,
                                         'Line': i + 1,
                                         'ErrorType': 'INDEX_LINE',
-                                        'ErrorContent': '타임코드 윗줄이 인덱스가 아닙니다.',
+                                        'ErrorContent': 'タイムコードの上の行がインデックスではありません。',
                                         'StartTC': lines[i].strip()
                                     })
                                 first_tc_found = True
@@ -169,7 +169,7 @@ def check_srt_format(folder_path):
                         'File': file,
                         'Line': 0,
                         'ErrorType': 'FILE_ERROR',
-                        'ErrorContent': f'파일 처리 중 오류 발생: {str(e)}',
+                        'ErrorContent': f'ファイル処理中にエラーが発生しました: {str(e)}',
                         'StartTC': ''
                     })
     
