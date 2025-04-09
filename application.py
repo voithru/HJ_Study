@@ -151,7 +151,7 @@ class Application(tb.Frame):  # tb.Frameに変更
         tree_frame.grid_columnconfigure(0, weight=1)
         tree_frame.grid_rowconfigure(0, weight=1)
 
-        columns = ("File", "StartTC", "ErrorType", "ErrorContent", "SubtitleText")
+        columns = ("File", "StartTC", "ErrorType", "ErrorContent", "SubtitleText", "Severity")
         self.results_tree = ttk.Treeview(
             tree_frame, columns=columns, show="tree headings"
         )
@@ -225,13 +225,14 @@ class Application(tb.Frame):  # tb.Frameに変更
                 error["ErrorType"],
                 error["ErrorContent"],
                 error["SubtitleText"].replace("\n", " "),
+                error.get("Severity", "Error")  # Default to 'Error' if not specified
             )
             self.results_tree.insert(
                 parent, "end", values=values, tags=(error["SubtitleText"],)
             )
         elif isinstance(error, tuple):
             self.results_tree.insert(
-                parent, "end", values=(error[0], "", "PARSE_ERROR", error[1], "")
+                parent, "end", values=(error[0], "", "PARSE_ERROR", error[1], "", "Error")
             )
 
     def on_double_click(self, event):
